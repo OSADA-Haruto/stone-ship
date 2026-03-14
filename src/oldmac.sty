@@ -1,0 +1,234 @@
+
+
+
+\def\onelineskip{\par\vspace{1\baselineskip}\par}
+\def\halflineskip{\par\vspace{.5\baselineskip}\par}
+\def\kintou#1#2{\@ifundefined{jintercharskip}%
+ {\leavevmode\hbox to #1{%
+   \kanjiskip\z@ \@plus 1fill \@minus 1fill\xkanjiskip\kanjiskip #2}}%
+ {\leavevmode\hbox to #1{\jintercharskip\z@ \@plus 1fill \@minus 1fill
+   \jasciikanjiskip\jintercharskip #2}}}
+\def\doubledash{\leavevmode\hbox to 2zw{---\hss ---}}
+\def\ruby#1#2{%
+\leavevmode\vbox{\baselineskip\z@skip\lineskip.25ex
+\ialign{##\crcr\tiny\hfill#1\hfill\crcr\hfill#2\hfill\crcr}}}
+\def\copyright{\raisebox{0.1zh}%
+{{\sevrm\ooalign{\hfil \lower.2ex\hbox{C}\hfil\crcr\mathhexbox20D}}}}
+\def\MARU#1{\raisebox{0.1zh}{{\rm\ooalign{\hfil \lower.168ex\hbox{#1}\hfil\crcr\mathhexbox20D}}}}
+
+
+\def\eqnarray{%
+  \stepcounter{equation}%
+  \let\@currentlabel=\theequation
+  \global\@eqnswtrue
+  \global\@eqcnt\z@
+  \tabskip\@centering
+  \let\\=\@eqncr
+  $$\halign to \displaywidth\bgroup\@eqnsel\hskip\@centering
+  $\displaystyle\tabskip\z@{##}$&\global\@eqcnt\@ne
+  \hfil$\displaystyle{{}##{}}$\hfil
+  &\global\@eqcnt\tw@$\displaystyle\tabskip\z@{##}$\hfil
+  \tabskip\@centering&\llap{##}\tabskip\z@\cr}
+
+\def\@begintheorem#1#2{\trivlist\renewcommand{\thechapter}{\@arabic\c@chapter}
+      \item[\hskip \labelsep{\bf #1\ #2}]\mbox{}\hskip1zw}
+\def\@opargbegintheorem#1#2#3{\trivlist\renewcommand{\thechapter}{\@arabic\c@chapter}
+      \item[\hskip \labelsep{\bf #1\ #2}\ (#3)]\mbox{}\hskip1zw}
+\def\@endtheorem{\endtrivlist}
+
+
+\newtheorem{’è—}{’è—}[chapter]
+\newtheorem{–½‘è}{–½‘è}[chapter]
+\newtheorem{’è‹`}{’è‹`}[chapter]
+\newtheorem{Œn}{Œn}[chapter]
+\newtheorem{•â‘è}{•â‘è}[chapter]
+
+\newcounter{notice}[chapter]
+\def\thenotice{\arabic{chapter}.\arabic{notice}}
+\newenvironment{notice}{\par%
+\begin{small}
+\refstepcounter{notice}
+\noindent{\bf ’ˆÓ\thenotice}\hskip1zw
+}{\end{small}\par}
+
+\newcounter{ques}[chapter]
+\def\theques{\arabic{chapter}.\arabic{ques}}
+\newenvironment{ques}{\par%
+\vspace*{.25\baselineskip}
+\refstepcounter{ques}
+\noindent{\bf y–â‘è\thequesz}\hskip1zw
+}{\par\vspace*{.25\baselineskip}}
+
+\newcounter{rei}[chapter]
+\def\therei{\arabic{chapter}.\arabic{rei}}
+\newenvironment{rei}{\par%
+\vspace*{.25\baselineskip}
+\refstepcounter{rei}
+\noindent{\bf y—á\thereiz}\hskip1zw
+}{\par\vspace*{.25\baselineskip}}
+
+\newenvironment{kai}{\par%
+\vspace*{.25\baselineskip}
+\noindent{\bf y‰ğz}\hskip1zw
+}{\par\vspace*{.25\baselineskip}}
+
+
+
+
+
+
+\def\chapques{%
+\vspace*{2\baselineskip}
+\vbox to 2\baselineskip{\vss\centerline{\bf Í–––â‘è}\vss}
+\small%
+\def\labelenumi{\<m\theenumin}
+\ifnum \@enumdepth >3 \@toodeep\else
+\advance\@enumdepth \@ne 
+\edef\@enumctr{enum\romannumeral\the\@enumdepth}\list
+{\csname label\@enumctr\endcsname}{\usecounter{\@enumctr}%
+\parsep\z@\topsep\z@\itemsep\z@\partopsep\z@\parskip\z@
+\listparindent0zw%
+\leftmargin0zw\labelwidth1.5zw\labelsep.5zw\itemindent2.1zw%
+\def\makelabel##1{\hss\llap{##1}}}\fi}
+\let\endchapques=\endlist
+
+
+\def\Fbox#1{\vspace{.5\baselineskip}
+\noindent\fbox{#1}\hskip1zw}
+
+\def\QED{\hfill (Ø–¾I‚í‚è)}
+
+\newcounter{Achap}
+\def\theAchap{\arabic{Achap}}
+\def\Achap{%
+\vspace*{.5\baselineskip}%
+\refstepcounter{Achap}\noindent{\small\bf ‘æ\theAchap Í}\par
+\vspace*{.5\baselineskip}}
+%
+\newcounter{ans}
+\def\theans{\theAchap.\arabic{ans}}
+\def\ans{%
+\refstepcounter{ans}\noindent{\small\bf \mbox{‰ğ“š}\kern1mm\theans}\hskip1zw}
+\newenvironment{sanswer}{%
+\clearpage
+\thispagestyle{empty}
+\markboth{Í–––â‘è‚Ì‰ğ“š}{Í–––â‘è‚Ì‰ğ“š}
+\addcontentsline{toc}{chapter}{Í–––â‘è‚Ì‰ğ“š}
+\font\KFenshu = goth10 at 14\JQ
+\vbox to 5\baselineskip{\noindent{\KFenshu Í–––â‘è‚Ì‰ğ“š}\vss}
+\begin{small}
+}{\end{small}\par}
+
+\newenvironment{manswer}{%
+\clearpage
+\thispagestyle{empty}
+\markboth{–â‘è‚Ì‰ğ“š}{–â‘è‚Ì‰ğ“š}
+\addcontentsline{toc}{chapter}{–â‘è‚Ì‰ğ“š}
+\font\KFenshu = goth10 at 14\JQ
+\vbox to 5\baselineskip{\noindent{\KFenshu –â‘è‚Ì‰ğ“š}\vss}
+\begin{small}
+}{\end{small}\par}
+
+
+
+\def\proof{\noindent{\bf Ø–¾}\hskip1zw}
+
+\def\Hrulefill{\leaders\hrule height.1mm\hfill}
+
+%%--- Frame box helpers ---%%
+% \@frametitlerule{title}: title rule spanning full text width (zero height via \smash)
+\def\@frametitlerule#1{%
+  \smash{\raisebox{-.5mm}{\hbox to .992\textwidth{%
+    \Hrulefill\kern1mm\smash{\raisebox{-1mm}{\large\bf #1}}\kern1mm\Hrulefill%
+  }}}%
+}
+
+% \@customfbox{top}{bottom}{content}
+% Draws a framed box with configurable top and bottom elements.
+%   top/bottom: \hrule\@height\fboxrule for a plain rule,
+%               \@frametitlerule{...} for a title rule, or {} for none.
+\long\def\@customfbox#1#2#3{%
+  \leavevmode\setbox\@tempboxa\hbox{#3}%
+  \@tempdima\fboxrule
+  \advance\@tempdima\fboxsep
+  \advance\@tempdima\dp\@tempboxa
+  \hbox{\lower\@tempdima\hbox{\vbox{%
+    #1%
+    \hbox{%
+      \vrule\@width\fboxrule\hskip\fboxsep
+      \vbox{\vskip\fboxsep\box\@tempboxa\vskip\fboxsep}%
+      \hskip\fboxsep\vrule\@width\fboxrule%
+    }%
+    #2%
+  }}}%
+}
+
+% \@framecontent{extra-top-space}{content}
+% Standard minipage wrapper used inside framed box environments.
+\long\def\@framecontent#1#2{%
+  \hspace*{1ex}%
+  \begin{minipage}[t]{0.95\textwidth}%
+    \vspace*{1ex}%
+    #1%
+    \hspace*{1zw}%
+    #2%
+    \vspace*{1.5ex}%
+  \end{minipage}%
+  \hspace*{1ex}%
+}
+
+% framesh: simple full-border frame
+\newenvironment{framesh}[1]{%
+  \noindent
+  \@customfbox{\hrule\@height\fboxrule}{\hrule\@height\fboxrule}{%
+    \@framecontent{}{#1}%
+  }%
+  \vspace*{.5\baselineskip}%
+  \begingroup}{\endgroup}
+
+% oneframesh: single-page titled frame (full border, ToC entry)
+\newenvironment{oneframesh}[2]{%
+  \addcontentsline{toc}{subsection}{\protect\small ƒRƒ‰ƒ€\quad #1}%
+  \small
+  \noindent
+  \@customfbox{\@frametitlerule{#1}}{\hrule\@height\fboxrule}{%
+    \@framecontent{\vspace*{\baselineskip}}{#2}%
+  }%
+  \vspace*{.5\baselineskip}%
+  \begingroup}{\endgroup}
+
+
+
+
+
+
+% bframesh: multi-page titled frame -- beginning (title rule, no bottom)
+\newenvironment{bframesh}[2]{%
+  \addcontentsline{toc}{subsection}{\protect\small ƒRƒ‰ƒ€\quad #1}%
+  \small
+  \noindent
+  \@customfbox{\@frametitlerule{#1}}{}{%
+    \@framecontent{\vspace*{\baselineskip}}{#2}%
+  }%
+  \vspace*{.5\baselineskip}%
+  \begingroup}{\endgroup}
+
+% tframesh: multi-page titled frame -- ending (no top, bottom rule)
+\newenvironment{tframesh}[1]{%
+  \small
+  \noindent
+  \@customfbox{}{\hrule\@height\fboxrule}{%
+    \@framecontent{}{#1}%
+  }%
+  \vspace*{.5\baselineskip}%
+  \begingroup}{\endgroup}
+
+% cframesh: multi-page titled frame -- middle (no top, no bottom)
+\newenvironment{cframesh}[1]{%
+  \small
+  \noindent
+  \@customfbox{}{}{%
+    \@framecontent{}{#1}%
+  }%
+  \vspace*{.5\baselineskip}%
+  \begingroup}{\endgroup}

@@ -1,0 +1,118 @@
+%\documentclass[Proof,tombo,JISfmt,Nopsfont]{todai-e}%% フォント不可，JIS不可
+%\documentclass[Proof,tombo,JISfmt]{todai-e}%%% JIS不可
+\documentclass[Proof,Nopsfont]{todai-e}%% フォント不可
+%\documentclass[Proof,tombo]{todai-e}%%% すべて読込み
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[dvipdfmx]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{eso-pic}
+\usepackage{geometry}
+\geometry{a4paper}
+\usepackage[deluxe]{otf}
+\usepackage{tgtermes} % 欧文明朝フォント（Timesクローン）
+\usepackage{amsmath}%
+\usepackage{amssymb}%
+\usepackage{latexsym}
+\usepackage{oldmac}
+\usepackage{makeidx}
+%***************************
+\usepackage{bm}
+%\usepackage[dvipdfmx]{graphicx}
+%\usepackage[dvipdfmx]{color}
+\usepackage{lscape}
+\usepackage{verbatim}
+\usepackage{wrapfig}
+\usepackage{ascmac}
+\usepackage{slant}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{listings,jlisting}
+\usepackage{chapterbib}
+\usepackage[round]{natbib}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable,skins}
+%\usepackage[dvipdfm, pdfstartview=FitH, bookmarksnumbered = true, linkbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
+%\AtBeginDvi{\special{pdf:tounicode EUC-UCS2}}
+%
+
+%
+\makeindex
+%
+%\setlength{\textwidth}{\fullwidth}
+%\setlength{\textheight}{40\baselineskip}
+%\addtolength{\textheight}{\topskip}
+%\setlength{\voffset}{-0.55in}
+%\setlength{\oddsidemargin}{2zw}%左余白
+%\setlength{\marginparsep}{0mm}%注釈の幅
+%\setlength{\evensidemargin}{2zw}
+%%
+
+\setcounter{secnumdepth}{6}
+\makeatletter
+
+%%% subsubsubsection (中身はparagraph)
+\newcommand{\subsubsubsection}{\@startsection{paragraph}{4}{\z@}%
+  {1.5\Cvs \@plus.5\Cdp \@minus.2\Cdp}%
+  {\z@}%
+  {\reset@font\normalsize\sffamily}
+}
+
+%%% subsubsubsubsection (中身はsubparagraph)
+\newcommand{\subsubsubsubsection}{\@startsection{subparagraph}{5}{\z@}%
+  {1.5\Cvs \@plus.5\Cdp \@minus.2\Cdp}%
+  {\z@}%
+  {\reset@font\normalsize\sffamily}
+}
+
+%%% subsubsubsubsubsection (新規作成)
+\newcounter{subsubsubsubsubsection}[subparagraph]
+\def\thesubsubsubsubsubsection{\thesubparagraph.\@arabic\c@subsubsubsubsubsection}
+\def\subsubsubsubsubsection{\@startsection{subsubsubsubsubsection}{6}{\z@}%
+  {1.5\Cvs \@plus.5\Cdp \@minus.2\Cdp}%
+  {\z@}%
+  {\reset@font\normalsize\sffamily}
+}
+\let\subsubsubsubsubsectionmark\@gobble
+
+\makeatother
+%***********************
+
+\definecolor{10}{cmyk}{0, 0, 0, 0.1}
+\definecolor{20}{cmyk}{0, 0, 0, 0.2}
+\definecolor{30}{cmyk}{0, 0, 0, 0.3}
+\definecolor{40}{cmyk}{0, 0, 0, 0.4}
+\definecolor{50}{cmyk}{0, 0, 0, 0.5}
+\definecolor{60}{cmyk}{0, 0, 0, 0.6}
+\definecolor{70}{cmyk}{0, 0, 0, 0.7}
+\definecolor{80}{cmyk}{0, 0, 0, 0.8}
+\definecolor{90}{cmyk}{0, 0, 0, 0.9}
+
+\usepackage{bm}
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+
+% 例題環境（章ごとに番号リセット）
+\newtcolorbox[auto counter,number within=chapter]{example}[1][]{
+  title={例題 \thetcbcounter},
+  colback=blue!5!white, colframe=blue!40!black,
+  fonttitle=\bfseries, breakable, #1
+}
+
+% コラム環境（番号なし，タイトル必須）
+\newtcolorbox{column}[1]{
+  title={コラム：#1},
+  colback=gray!10!white, colframe=gray!50!black,
+  fonttitle=\bfseries, breakable
+}
+
+\begin{document}
+\input{cover.tex}
+\tableofcontents
+
+\include{chapters/sample}
+
+\include{chapters/1}
+
+\end{document}
+

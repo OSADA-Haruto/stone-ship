@@ -1,0 +1,76 @@
+\definecolor{coveryellow}{RGB}{242,230,0}
+\definecolor{lineorange}{RGB}{210,105,29}
+\definecolor{lineblack}{RGB}{0,0,0}
+\definecolor{scriptorange}{RGB}{243,169,40}
+
+\newgeometry{left=0mm,right=0mm,top=0mm,bottom=0mm}
+\thispagestyle{empty}
+
+\AddToShipoutPictureBG*{%
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[coveryellow] (current page.south west) rectangle (current page.north east);
+
+  \draw[lineorange,line width=1pt]
+    ($(current page.north west)+(0,-20mm)$) -- ($(current page.north east)+(0,-20mm)$);
+
+  \draw[lineorange,line width=1pt]
+    ($(current page.north east)+(-20mm,0)$) -- ($(current page.south east)+(-20mm,0)$);
+
+  \draw[lineorange,line width=1pt]
+    ($(current page.south west)+(0,28mm)$) -- ($(current page.south east)+(0,28mm)$);
+
+  \draw[lineblack,line width=1pt]
+    ($(current page.north west)+(1mm,0)$) -- ($(current page.south west)+(1mm,0)$);
+
+  \fill[lineorange] ($(current page.north east)+(-20mm,-20mm)$) rectangle ++(-8mm,6mm);
+  \fill[lineorange] ($(current page.north east)+(-20mm,-20mm)$) rectangle ++(6mm,-18mm);
+
+  \node[anchor=north west,text=lineorange,font=\mcfamily\fontsize{20}{20}\selectfont]
+    at ($(current page.north west)+(12mm,-10mm)$) {BinN Studies シリーズ};
+
+  \node[anchor=north west,text=black,font=\bfseries\mcfamily\fontsize{52}{52}\selectfont]
+    at ($(current page.north west)+(16mm,-55mm)$) {タイトルTitle};
+
+  \node[anchor=north west,text=black,font=\fontsize{16}{24}\selectfont,align=left]
+    at ($(current page.north west)+(20mm,-85mm)$) {%
+      羽藤英二\\
+      小川大智 \hspace{.3em} 須賀理帆 \hspace{.3em} 古橋郁一 \hspace{.3em} 松永隆宏 \hspace{.3em} 今村啓太 \hspace{.5em} 篇
+      };
+
+  \node[anchor=north east,text=scriptorange!100,font=\ttfamily\fontsize{7}{11}\selectfont,align=right]
+    at ($(current page.north east)+(-24mm,-156mm)$) {%
+      \#\# パラメータ値の最適化\\
+      res <- optim(b0, fn, method="BFGS", hessian=TRUE,control=list(fnscale=-1))\\
+      \\
+      \#\# パラメータ推定値，ヘッセ行列\\
+      b <- res\$par\\
+      hhh <- res\$hessian\\
+      \\
+      \#\# t値の計算\\
+      tval <- b/sqrt(-diag(solve(hhh)))\\
+      \\
+      \#\# 初期尤度\\
+      L0 <- fn(b0)\\
+      \#\# 最終尤度\\
+      LL <- res\$value\\
+      \\
+      \#\#\#\#\# 結果の出力 \#\#\#\#\#\\
+      \#\# 初期尤度\\
+      print(L0)\\
+      \#\# 最終尤度\\
+      print(LL)\\
+      \#\# $\rho^2$値\\
+      print(1-LL/L0)\\
+      \#\# 修正済み$\rho^2$値\\
+      print(1-(LL-length(b))/L0)\\
+      \#\# パラメータ推定値\\
+      print(b)\\
+      \#\# t値\\
+      print(tval)
+    };
+\end{tikzpicture}%
+}
+
+\null
+\clearpage
+\restoregeometry

@@ -1,0 +1,47 @@
+\newbox\tmp@X
+
+% \slantbox{angle}{content}
+% Slants the content of a box without changing its bounding box dimensions.
+%   angle: 'sl' for arctan(1/6) ~= 9.46 deg (similar to \it slant)
+%          'it' for arctan(1/4) ~= 14.04 deg (similar to \sl slant)
+%          numeric degree value (requires eclarith.sty)
+% Requires: graphicx package; eclarith.sty when using numeric angle values.
+\def\slantbox#1#2{{%
+  \setbox\tmp@X\hbox{#2}\edef\tmptok@a{#1}%
+  % Preset: sl -- arctan(1/6) = 9.46232 deg
+  \def\tmptok@b{sl}\ifx\tmptok@a\tmptok@b
+    \def\@RotDeg{49.7312}%
+    \def\sec@Theta{1.01379}%
+    \def\csDif@hTheta{.914112}%
+    \def\csSum@hTheta{1.07907}%
+  \else
+    % Preset: it -- arctan(1/4) = 14.0362 deg
+    \def\tmptok@b{it}\ifx\tmptok@a\tmptok@b
+      \def\@RotDeg{52.0181}%
+      \def\sec@Theta{1.03078}%
+      \def\csDif@hTheta{.870324}%
+      \def\csSum@hTheta{1.11469}%
+    \else
+      % Numeric angle: compute rotation parameters via eclarith.sty
+      \Mul{#1}{.5}\@hTheta \Add{45}\@hTheta\@RotDeg
+      \DegRad\@hTheta\@hTheta
+      \Cos\@hTheta\c@hTheta \Sin\@hTheta\s@hTheta
+      \Add\c@hTheta\s@hTheta\csSum@hTheta
+      \Sub\c@hTheta\s@hTheta\csDif@hTheta
+      \Mul\csSum@hTheta\csDif@hTheta\sec@Theta
+      \Div{1}\sec@Theta\sec@Theta
+    \fi
+  \fi
+  \mbox{%
+    \rotatebox{-\@RotDeg}{%
+      \scalebox{\csDif@hTheta}[\csSum@hTheta]{%
+        \rotatebox{45}{%
+          \scalebox{1}[\sec@Theta]{%
+            \smash{\makebox[0pt][l]{\usebox{\tmp@X}}}%
+          }%
+        }%
+      }%
+    }%
+  }\phantom{\usebox{\tmp@X}}%
+}}
+\def\slbox{\slantbox{sl}}\def\itbox{\slantbox{it}}
