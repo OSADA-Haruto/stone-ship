@@ -75,7 +75,7 @@ git clone https://github.com/bin-utokyo/stone-ship.git
 cd stone-ship
 
 # 2. Create a working branch (direct commits to main are not allowed)
-git checkout -b chapter/2
+git checkout -b chapter/demand
 ```
 
 > For branch naming rules, see [Branch naming](#branch-naming).
@@ -91,9 +91,9 @@ stone-ship/
 │   ├── cover.tex             # Cover page
 │   ├── chapters/             # Per-chapter .tex files
 │   │   ├── sample.tex        # Markup sample (please read this first)
-│   │   └── 1.tex             # Chapter 1
+│   │   └── intro.tex         # Introduction
 │   ├── bibliography/         # Per-chapter .bib files
-│   │   ├── 1.bib             # For Chapter 1
+│   │   ├── intro.bib         # For Introduction
 │   │   └── sample_refs.bib   # For the sample
 │   ├── assets/               # Figures and images (PNG / PDF / EPS)
 │   └── *.sty / *.cls         # Style files (do not edit)
@@ -101,6 +101,8 @@ stone-ship/
 ├── docs/
 │   ├── CONTRIBUTING.md       # Contribution guide (Japanese)
 │   ├── CONTRIBUTING.en.md    # Contribution guide (English / this file)
+│   ├── onboarding.md         # Onboarding guide (Japanese)
+│   ├── onboarding.en.md      # Onboarding guide (English)
 │   ├── style-guide.md        # Typography and markup guide (Japanese)
 │   └── style-guide.en.md     # Typography and markup guide (English)
 └── utility/
@@ -115,10 +117,10 @@ stone-ship/
 ### Step 1 — Create a chapter file
 
 Create a new `.tex` file under `src/chapters/`.
-Name it after the chapter number (e.g. `2.tex`) or a descriptive English word (e.g. `demand.tex`).
+Name it after the chapter content using a descriptive English word (e.g. `demand.tex`).
 
 ```latex
-% src/chapters/2.tex
+% src/chapters/demand.tex
 
 \chapter{Fundamentals of Demand Analysis}
 
@@ -129,7 +131,7 @@ This chapter covers…
 % -------------------------------------------------------
 \addcontentsline{toc}{chapter}{References}
 \bibliographystyle{stone-ship}
-\bibliography{../src/bibliography/2}
+\bibliography{../src/bibliography/demand}
 ```
 
 ### Step 2 — Create a bib file
@@ -137,7 +139,7 @@ This chapter covers…
 Create a corresponding `.bib` file under `src/bibliography/`.
 
 ```bibtex
-% src/bibliography/2.bib
+% src/bibliography/demand.bib
 
 @article{YourKey2025,
   author  = {Yamada, Taro},
@@ -161,17 +163,17 @@ Add an `\include` entry in `src/main.tex`.
 
 ```latex
 \include{chapters/sample}
-\include{chapters/1}
-\include{chapters/2}   % ← add this line
+\include{chapters/intro}
+\include{chapters/demand}   % ← add this line
 ```
 
 ### Step 4 — Adding figures
 
-Create a chapter-specific subdirectory under `src/assets/` (e.g. `src/assets/2/`) and place figure files (PNG / PDF / EPS recommended) there.
+Create a chapter-specific subdirectory under `src/assets/` (e.g. `src/assets/demand/`) and place figure files (PNG / PDF / EPS recommended) there.
 Reference them with `\includegraphics` using a path relative to `src/`.
 
 ```latex
-\includegraphics[width=0.6\textwidth]{assets/2/my-figure.png}
+\includegraphics[width=0.6\textwidth]{assets/demand/my-figure.png}
 ```
 
 See [style-guide.md](style-guide.md) and `src/chapters/sample.tex` for detailed markup conventions.
@@ -229,11 +231,11 @@ The following commands work the same on macOS / Linux (bash/zsh) and Windows (Po
 
 ```bash
 # Stage and commit changes
-git add src/chapters/2.tex src/bibliography/2.bib src/main.tex
-git commit -m "Add chapter 2: Fundamentals of Demand Analysis"
+git add src/chapters/demand.tex src/bibliography/demand.bib src/main.tex
+git commit -m "Add chapter demand: Fundamentals of Demand Analysis"
 
 # Push to remote
-git push origin chapter/2
+git push origin chapter/demand
 ```
 
 Open a pull request on GitHub and request a review.
@@ -250,8 +252,8 @@ Create one branch **per chapter**.
 
 | Purpose | Branch name format | Examples |
 |---|---|---|
-| Writing or editing a chapter | `chapter/<number-or-name>` | `chapter/2`, `chapter/demand` |
-| A focused sub-task within a chapter | `chapter/<number>/<topic>` | `chapter/2/figures`, `chapter/2/fix-refs` |
+| Writing or editing a chapter | `chapter/<name>` | `chapter/demand`, `chapter/supply` |
+| A focused sub-task within a chapter | `chapter/<name>/<topic>` | `chapter/demand/figures`, `chapter/demand/fix-refs` |
 
 Rules:
 
@@ -262,22 +264,22 @@ Rules:
 
 ```bash
 # Create and switch to a chapter branch
-git checkout -b chapter/2
+git checkout -b chapter/demand
 
 # Create a sub-branch from the chapter branch
-git checkout -b chapter/2/figures
+git checkout -b chapter/demand/figures
 
 # ... work ...
 
 # Merge the sub-branch back into the chapter branch when done
-git checkout chapter/2
-git merge chapter/2/figures
+git checkout chapter/demand
+git merge chapter/demand/figures
 ```
 
 ### Commit message conventions
 
-- `Add chapter N: <chapter title>` — add a new chapter
-- `Fix chapter N: <description>` — fix an existing chapter
+- `Add chapter <name>: <chapter title>` — add a new chapter
+- `Fix chapter <name>: <description>` — fix an existing chapter
 - `Update main.tex: <description>` — change the master document
 - `Add assets: <filename>` — add figures or images
 - `Fix bib: <description>` — fix bibliography entries
