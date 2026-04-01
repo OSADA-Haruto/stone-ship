@@ -9,7 +9,7 @@
 しかし，\sref{sec:ch3-ue}の Braess のパラドックス（\ssref{subsec:braess}）が示すように，
 個人の合理的行動の集積が必ずしも社会全体にとって望ましい結果をもたらすとは限らない．
 個々の利用者は道路に参入するとき，自分の旅行時間しか考慮しないが，
-実際には他の利用者の旅行時間も増大させている——これが\textbf{混雑の外部性}である．
+実際には他の利用者の旅行時間も増大させている．これが\textbf{混雑の外部性}である．
 
 本節では，この外部性を明示的に扱い，ネットワーク全体の\textbf{総旅行時間を最小化する}
 配分として定義される\textbf{システム最適配分}（System Optimal, SO）を導入する（\ssref{subsec:wardrop2}）．
@@ -85,6 +85,51 @@ UE-Frank-Wolfe では各リンクの旅行時間 $t_a(x_a^{(n)})$（私的限界
 SO の KKT 条件は「全使用経路の社会的限界費用の和が等しい」という
 Wardrop の第2原則に対応する．
 
+\subsubsection*{アルゴリズムの手順}
+
+アルゴリズムの各ステップを表\ref{tab:so-fw-algorithm}に示す．
+UE の場合（表\ref{tab:fw-algorithm}）と Step 2 の費用計算のみが異なる．
+
+\begin{table}[hbtp]
+  \centering
+  \caption{SO を解く Frank-Wolfe 法のアルゴリズム}
+  \label{tab:so-fw-algorithm}
+  \begin{tabular}{cp{0.82\linewidth}}
+    \toprule
+    Step & 内容 \\
+    \midrule
+    1 & \textbf{初期化}：すべてのリンク交通量を $x_a^{(0)}=0$ とし，
+        自由流社会的限界費用 $\mathrm{SMC}_a(0)=t_{a0}$ に基づいて
+        All-or-Nothing 配分を実行し，初期解 $\boldsymbol{x}^{(1)}$ を得る．$n \leftarrow 1$．
+        \\[4pt]
+    2 & \textbf{社会的限界費用の更新}：現在の解 $\boldsymbol{x}^{(n)}$ の各リンクで
+        社会的限界費用
+        $\mathrm{SMC}_a\!\left(x_a^{(n)}\right)
+         = t_a\!\left(x_a^{(n)}\right) + x_a^{(n)}\,t_a'\!\left(x_a^{(n)}\right)$
+        を計算する（式\eqref{eq:smc-gradient}）．
+        \\[4pt]
+    3 & \textbf{補助解の計算}（Frank-Wolfe ステップ）：\\
+      & 更新された社会的限界費用のもとで All-or-Nothing 配分を実行し，
+        補助解 $\boldsymbol{y}^{(n)}$ を得る．
+        \\[4pt]
+    4 & \textbf{ステップサイズ探索}（線探索）：\\
+      & \quad $\alpha^* = \arg\min_{0 \leq \alpha \leq 1}
+        Z_{SO}\!\left(\boldsymbol{x}^{(n)} + \alpha
+        \bigl(\boldsymbol{y}^{(n)} - \boldsymbol{x}^{(n)}\bigr)\right)$\\[2pt]
+      & 黄金分割法などの1次元最小化を用いる．
+        \\[4pt]
+    5 & \textbf{解の更新}：
+        $\boldsymbol{x}^{(n+1)} = (1-\alpha^*)\boldsymbol{x}^{(n)}
+        + \alpha^* \boldsymbol{y}^{(n)}$．
+        \\[4pt]
+    6 & \textbf{収束判定}：
+        相対ギャップ（式\eqref{eq:relative-gap}）が閾値 $\varepsilon$ 以下なら終了．
+        そうでなければ $n \leftarrow n+1$ として Step 2 へ．
+        \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 % ---------------------------------------------------------------
 \subsection{UEとSOの比較}
 \label{subsec:ue-so-comparison}
@@ -93,7 +138,7 @@ Wardrop の第2原則に対応する．
 UE と SO の本質的な違いを一言で表せば，
 「個人の最適化」対「全体の最適化」である．
 
-UE では各利用者が\textbf{私的限界費用}（PMC）——自分が経験する旅行時間 $t_a(x_a)$——
+UE では各利用者が\textbf{私的限界費用}（PMC），すなわち自分が経験する旅行時間 $t_a(x_a)$，
 のみを考慮して経路を選択するため，
 自分が道路に加わることで他の利用者に与える追加的な旅行時間遅延（外部コスト）は無視される．
 この外部性の無視が，UE 配分を社会的に非効率にする根本原因である．
@@ -238,7 +283,7 @@ BPR 関数 $t_a(x_a) = t_{a0}\left\{1 + \alpha(x_a/C_a)^\beta\right\}$（\ssref{
   D(x_a) = \text{SMC}(x_a)
   \label{eq:so-condition}
 \end{equation}
-すなわち，需要曲線と SMC 曲線が交わる点が社会的余剰を最大化する配分——
+すなわち，需要曲線と SMC 曲線が交わる点が社会的余剰を最大化する配分であり，
 これが SO 配分 $x_{SO}$ にほかならない（図\ref{fig:surplus-analysis} の「SO 点」）．
 
 \subsubsection*{UE 配分における死荷重損失}
