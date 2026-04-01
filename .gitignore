@@ -10,3 +10,6 @@ build/
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+
+*.idx
+*.dvi
