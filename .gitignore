@@ -13,3 +13,6 @@ build/
 
 *.idx
 *.dvi
+
+.vscode/
+.DS_Store
