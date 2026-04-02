@@ -182,6 +182,18 @@ $\alpha, \beta$ はパラメータである．
 この区別は，\sref{sec:ch2-uncongested}（非混雑型配分）と\sref{sec:ch3-ue}・\sref{sec:ch4-sue}（均衡配分）の節立てに対応する
 （次節参照）．
 
+\begin{example}[title={クイズ 1：首都高3号線，朝ラッシュで何分遅れる？}]
+首都高速3号渋谷線（用賀$\rightarrow$大橋JCT，自由流旅行時間 $t_{a0}=10$ 分，容量 $C_a=2{,}000$ 台/時）でBPR パラメータ $\alpha=0.15$，$\beta=4$ を仮定します．
+交通量が容量ちょうど（$x_a = C_a$）のとき，旅行時間はいくらになるでしょうか？
+\begin{itemize}
+  \item[(ア)] 10.0分（変わらない）
+  \item[(イ)] 11.5分（1.15倍）
+  \item[(ウ)] 17.6分（1.76倍）
+  \item[(エ)] 25.0分（2.5倍）
+\end{itemize}
+\hyperref[ans:q1]{$\rightarrow$ 正解・解説は節末を参照}
+\end{example}
+
 % ---------------------------------------------------------------
 \subsection{配分モデルの全体像}
 \label{subsec:model-overview}
@@ -248,3 +260,12 @@ $\alpha, \beta$ はパラメータである．
         基本的な骨格をなす
         （\ssref{subsec:model-overview}）．
 \end{enumerate}
+
+\begin{example}[title={クイズ 1 正解・解説}]
+\phantomsection\label{ans:q1}
+\textbf{正解：（イ）}
+
+$t_a=10\times[1+0.15\times 1^4]=11.5$ 分．
+容量ちょうどではわずかな増加にとどまりますが，$x_a/C_a=1.5$ になると 17.6 分に急増します．
+4乗の効果が効くのは容量を大きく超えてからです．
+\end{example}
