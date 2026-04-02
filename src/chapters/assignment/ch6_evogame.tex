@@ -26,6 +26,26 @@ Frank-Wolfe 法によって数値的に解けることを確認した\cite{Beckm
 \ssref{subsec:stability-convergence} で収束定理を述べ，
 \ssref{subsec:daytodaydyn} で Day-to-day ダイナミクスの交通政策への含意を考察する．
 
+本節で新たに用いる主要記号を表\ref{tab:ch6-notation}にまとめる（基本記号は表\ref{tab:notation}参照）．
+
+\begin{table}[hbtp]
+  \centering
+  \caption{進化ゲームと Day-to-day ダイナミクスの主要記号}
+  \label{tab:ch6-notation}
+  \begin{tabular}{cll}
+    \toprule
+    記号 & 意味 & 単位（例） \\
+    \midrule
+    $\boldsymbol{x} \in X$ & 社会状態ベクトル（各戦略を選択している利用者数） & 台/時 \\
+    $F_i(\boldsymbol{x})$  & 戦略 $i$ の利得関数（$= -c_k^{rs}$；負の旅行時間） & — \\
+    $\bar{F}(\boldsymbol{x})$ & 集団全体の平均利得 $= \sum_i x_i F_i / m$ & — \\
+    $\rho_{ij}(F,\boldsymbol{x})$ & 改訂プロトコル（戦略 $i$ から戦略 $j$ への乗り換え率） & 日$^{-1}$ \\
+    $\dot{f}_k^{rs}$       & 経路交通量の時間変化率（Day-to-day ODE の左辺） & — \\
+    $\boldsymbol{V}(\boldsymbol{f})$ & 集団ダイナミクスのベクトル場（$\dot{\boldsymbol{f}} = \boldsymbol{V}(\boldsymbol{f})$） & — \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 % ---------------------------------------------------------------
 \subsection{ポテンシャルゲームとしての UE}
 \label{subsec:potential-game}
@@ -259,7 +279,7 @@ Sandholm（2010）の\textbf{集団ゲーム}（Population Game）$\mathcal{G}$
 
 交通配分の文脈では，戦略 $i$ を経路 $k^{rs}$ と読み替え，
 $x_i = f_k^{rs}$，$F_i = -c_k^{rs}$ とすることで，
-Day-to-day 調整過程の ODE が得られる．
+Day-to-day 調整過程の常微分方程式（ODE）が得られる．
 
 \subsubsection*{フロー保存の維持}
 
@@ -300,6 +320,7 @@ Day-to-day 調整過程の ODE が得られる．
       = \bigl[-c_j^{rs} + c_i^{rs}\bigr]_+
       \label{eq:smith-protocol}
     \end{equation}
+    ここで $[\cdot]_+ \coloneqq \max(\cdot,\, 0)$ は正値部分（負の値をゼロとする操作）を表す．
     すなわち，乗り換え先 $j$ のほうが現在の戦略 $i$ より利得が大きい（コストが低い）
     場合のみ，コスト差に比例した率で乗り換えが生じる．
 
@@ -380,7 +401,7 @@ Day-to-day 調整過程の ODE が得られる．
 
 \subsubsection*{進化動学に課す条件}
 
-ここでは，経路フローの時間発展を記述する ODE
+ここでは，経路フローの時間発展を記述する常微分方程式（ODE）
 \begin{equation}
   \dot{\boldsymbol{f}} = \boldsymbol{V}(\boldsymbol{f})
   \label{eq:evolutionary-dynamics-ode}
