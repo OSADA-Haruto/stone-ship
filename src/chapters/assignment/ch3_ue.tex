@@ -54,7 +54,7 @@ UE モデルは以下の2つの行動仮定に立脚する：
 それ以上短縮できない．言い換えると，UE は交通量配分における
 \textbf{Nash 均衡}（Nash equilibrium）に対応する
 \cite{Nash1950,Nash1951}
-（Nash 均衡との等価性の厳密な議論は補足C を参照）．
+（Nash 均衡との等価性の厳密な議論は\sref{sec:appendix-C}を参照）．
 
 \subsubsection*{UE 条件の数学的表現}
 
@@ -74,7 +74,7 @@ Wardrop の第1原則を数式として表すと，
 $c_k^{rs} = \sum_{a} t_a(x_a)\,\delta_{a,k}^{rs}$ は経路 $k^{rs}$ の旅行時間
 （式\eqref{eq:path-time}参照）である．
 
-条件\eqref{eq:wardrop-condition}を\textbf{相補性条件}（相補性条件および KKT 条件の一般形については補足D を参照）の形式に書き直すと，
+条件\eqref{eq:wardrop-condition}を\textbf{相補性条件}（相補性条件および KKT 条件の一般形については\sref{sec:appendix-D}を参照）の形式に書き直すと，
 
 \begin{equation}
   f_k^{rs} \geq 0,
@@ -326,7 +326,7 @@ UE/FD-Primal\eqref{eq:ue-primal}はこれらをすべて満たす
       & \quad $\alpha^* = \arg\min_{0 \leq \alpha \leq 1}
         Z\!\left(\boldsymbol{x}^{(n)} + \alpha
         \bigl(\boldsymbol{y}^{(n)} - \boldsymbol{x}^{(n)}\bigr)\right)$\\[2pt]
-      & 黄金分割法などの1次元最小化を用いる（補足A 参照）．
+      & 黄金分割法などの1次元最小化を用いる（\sref{sec:appendix-A}参照）．
         \\[4pt]
     5 & \textbf{解の更新}：
         $\boldsymbol{x}^{(n+1)} = (1-\alpha^*)\boldsymbol{x}^{(n)}
