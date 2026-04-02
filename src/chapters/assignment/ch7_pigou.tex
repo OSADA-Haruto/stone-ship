@@ -101,7 +101,7 @@ $\text{PMC} + \tau^* = t(V^*) + V^* t'(V^*) = \text{SMC}(V^*)$
   breakable, fonttitle=\bfseries\small
 ]
   \begin{itemize}\setlength{\itemsep}{2pt}
-    \item 課金なし（UE）では PMC のみを参照 → SMC > PMC により過剰交通量
+    \item 課金なし（UE）では PMC のみを参照 $\rightarrow$ SMC $>$ PMC により過剰交通量
     \item ピグー税 $\tau^* = \text{MEC}(V^*)$ を課すと，私的費用 = SMC
     \item 利用者の自発的な経路選択が社会最適（SO 解）と一致する
     \item 課金収入（= $\tau^* \times V^*$）は政府が徴収し，再分配可能（\ssref{subsec:redistribution}参照）
@@ -233,7 +233,17 @@ $\beta=4$（通常値）では，$V/C$ が2倍になると $\tau_a^*$ は $2^4 =
         都心部への流入リンクのみに課金し，
         外部性全体を近似的に内部化するとともに政治的受容性を確保している\cite{Vickrey1969}．
 \end{itemize}
-
+\begin{example}[title={クイズ 10：首都高だけに課金したら，環七はどうなる？}]
+首都高速と並走する環状七号線（環七通り）は無料です．仮に首都高にのみ最適課金 $\tau^*=1$（前章参照）を設定した場合，
+次のうち最も起きやすいのはどれでしょうか？
+\begin{itemize}
+  \item[(ア)] 首都高の混雑が解消され，環七も含めたネットワーク全体が改善される
+  \item[(イ)] 課金を嫌ったドライバーが環七に流れ込み，環七の混雑が増し，
+             課金による社会的改善効果が大きく削がれる
+  \item[(ウ)] ドライバーは料金差より利便性を重視するため，流出はほとんど起きない
+\end{itemize}
+\hyperref[ans:q10]{$\rightarrow$ 正解・解説は節末を参照}
+\end{example}
 % ---------------------------------------------------------------
 \subsection{Vickrey ボトルネックモデルと動的課金}
 \label{subsec:vickrey-bottleneck}
@@ -359,7 +369,7 @@ $\gamma > \alpha > \beta$ の仮定は，「遅刻は待ち時間より嫌」「
 
 実務では連続的な料金プロファイル $\tau(t)$ の設定は困難なため，
 時間帯を数個に区切った\textbf{時間帯別料金}（Time-of-Day Pricing）で近似される．
-例えば「ピーク前（やや高）→ピーク（最高）→ピーク後（やや高）→夜間（無料）」という
+例えば「ピーク前（やや高）$\rightarrow$ ピーク（最高）$\rightarrow$ ピーク後（やや高）$\rightarrow$ 夜間（無料）」という
 3〜4段階の料金体系が実用的である．
 シンガポールの ERP（Electronic Road Pricing）は
 30分単位で料金を変動させる実装例として知られている．
@@ -452,8 +462,8 @@ $\gamma > \alpha > \beta$ の仮定は，「遅刻は待ち時間より嫌」「
 \textbf{二重配当}（double dividend）が生じる\cite{Pigou1920}：
 
 \begin{enumerate}
-  \item \textbf{第一配当}：混雑外部性の内部化 → 交通効率の改善（死荷重損失の解消）
-  \item \textbf{第二配当}：租税の歪み（超過負担）の縮小 → 経済全体の効率改善
+  \item \textbf{第一配当}：混雑外部性の内部化 $\rightarrow$ 交通効率の改善（死荷重損失の解消）
+  \item \textbf{第二配当}：租税の歪み（超過負担）の縮小 $\rightarrow$ 経済全体の効率改善
 \end{enumerate}
 
 両配当が同時に実現するため，混雑課金はただの「税収確保策」ではなく，
@@ -482,3 +492,13 @@ $\gamma > \alpha > \beta$ の仮定は，「遅刻は待ち時間より嫌」「
         二重配当効果によって混雑課金を経済政策として正当化する論拠も生まれる
         （\ssref{subsec:redistribution}）．
 \end{enumerate}
+
+\begin{example}[title={クイズ 10 正解・解説}]
+\phantomsection\label{ans:q10}
+\textbf{正解：（イ）}
+
+これが第二最善課金の本質——課金可能リンクが $A^T\subsetneq A$ に限定されると，
+課金外リンクへの交通転換が新たな外部性を生みます．
+「首都高は有料・一般道は無料」という現実の制度は，
+まさにこの第二最善問題を毎日実演しています．
+\end{example}
