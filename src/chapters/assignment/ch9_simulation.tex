@@ -1,15 +1,10 @@
-%% chapters/assignment/ch8_simulation.tex
-%% 第8章　シミュレーション
-
-%% NOTE: 第6章（進化ゲーム理論）・第7章（ピグー課金）は未執筆のため，
-%%       assignment.tex 側で \setcounter{section}{7} を設定して
-%%       この章が第8節として出力されるようにしている．
-%%       第6・7章が追加された際は assignment.tex の setcounter 行を削除すること．
+%% chapters/assignment/ch9_simulation.tex
+%% 第9章　シミュレーション
 
 \section{シミュレーション}
-\label{sec:ch8-simulation}
+\label{sec:ch9-simulation}
 
-前節（\sref{sec:ch7-pigou}）まで，交通ネットワークの均衡・最適化・課金理論を
+前節（\sref{sec:ch8-pigou}）まで，交通ネットワークの均衡・最適化・課金理論を
 解析的・数値的手法で扱ってきた．
 これらの理論モデルは均衡条件や最適解を明示的に与え，解釈性に優れる反面，
 大規模ネットワーク上での動的な交通変動，信号制御・情報提供といった施策の時空間的影響，
@@ -54,12 +49,12 @@
 \ssref{subsec:micro-sim} でミクロシミュレーションの基礎となる
 \textbf{車両追従モデル}（GHR モデル）をそれぞれ解説する．
 
-本節で用いる主要記号を表\ref{tab:ch8-notation}にまとめる．
+本節で用いる主要記号を表\ref{tab:ch9-notation}にまとめる．
 
 \begin{table}[hbtp]
   \centering
   \caption{シミュレーションの主要記号}
-  \label{tab:ch8-notation}
+  \label{tab:ch9-notation}
   \begin{tabular}{cll}
     \toprule
     記号 & 意味 & 単位（例） \\
@@ -393,7 +388,7 @@ GHR モデルはパラメータ組 $(\alpha, \beta, \gamma)$ によって
 
 マクロシミュレーションとミクロシミュレーションはいずれも一方が他方を代替するものではなく，
 分析目的・スケール・利用可能データに応じて使い分けるべき相補的な手法である．
-均衡配分理論（\sref{sec:ch3-ue}〜\sref{sec:ch5-so}）・進化ダイナミクス（\sref{sec:ch6-evogame}）・混雑課金（\sref{sec:ch7-pigou}）といった
+均衡配分理論（\sref{sec:ch3-ue}〜\sref{sec:ch5-so}）・進化ダイナミクス（\sref{sec:ch7-evogame}）・混雑課金（\sref{sec:ch8-pigou}）といった
 本テキストの理論的成果を現実のシステムで検証・活用する際に，
 シミュレーションは不可欠なブリッジとして機能する．
 
@@ -415,7 +410,7 @@ GHR モデルはパラメータ組 $(\alpha, \beta, \gamma)$ によって
   \item マクロ・ミクロの2手法は相補的であり，
         分析目的・スケール・利用可能データに応じて使い分けることが求められる；
         均衡配分理論（\sref{sec:ch3-ue}〜\sref{sec:ch5-so}）・
-        進化ダイナミクス（\sref{sec:ch6-evogame}）・
-        混雑課金（\sref{sec:ch7-pigou}）といった理論的成果を
+        進化ダイナミクス（\sref{sec:ch7-evogame}）・
+        混雑課金（\sref{sec:ch8-pigou}）といった理論的成果を
         現実のシステムで検証・活用する際の不可欠なブリッジとして機能する．
 \end{enumerate}
