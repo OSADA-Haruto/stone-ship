@@ -101,6 +101,15 @@ y_k = \argmax_{a} \left( \sum_{i} \beta_{i} x_{a, i} + \varepsilon_a \right) = \
 ガンベル分布を用いたモデルを Probit Model と区別して Logit Modelと呼ぶ．
 また選択肢が二つの場合は特に Binary Logit Model と呼び，複数の場合は Multinomial Logit Model と呼ぶ．
 
+なお，序章で述べたように，このLogit選択確率は摂動効用理論の観点からも導出できる．
+具体的には，需要ベクトル $\bm{p}$（各選択肢の選択確率）に対して，期待効用とShannon entropy正則化項からなる以下の直接効用関数
+\begin{equation}\label{eq:perturbed_utility}
+  \max_{\bm{p} \geq \bm{0},\, \sum_a p_a = 1} \left\{ \sum_a p_a V_a + \frac{1}{\mu}\mathcal{H}(\bm{p}) \right\}, \quad \mathcal{H}(\bm{p}) = -\sum_a p_a \ln p_a
+\end{equation}
+を最適化すると，最適解として上記のLogit選択確率が得られる．
+すなわち，ARUMにおける「誤差項にガンベル分布を仮定する」ことと，摂動効用理論における「正則化項にShannon entropyを仮定する」ことは\textbf{共役関係}にあり，同一の選択確率を導く．
+この双対的な見方は，第3節で摂動効用理論に基づく経路選択モデルを導入する際に重要となる．
+
 なお，ガンベル分布と正規分布の確率密度関数は図\ref{fig:gumbel-pdf}のような形状をしている．
 \begin{figure}[hbtp]
   \centering
