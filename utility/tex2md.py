@@ -29,6 +29,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import tempfile
 
 
 def find_repo_root() -> pathlib.Path:
@@ -42,6 +43,46 @@ def locate_pandoc(hint: str | None) -> str | None:
         p = pathlib.Path(hint)
         return str(p) if p.is_file() else None
     return shutil.which("pandoc")
+
+
+# テキストファイルとして扱う拡張子
+_TEXT_SUFFIXES = {".tex", ".bib", ".sty", ".cls", ".bst"}
+# UTF-8 解釈に失敗した場合に試みるフォールバックエンコーディング（順に試す）
+_FALLBACK_ENCODINGS = ["cp1252", "latin-1"]
+
+
+def sanitize_src_to_utf8(
+    src_dir: pathlib.Path,
+    dst_dir: pathlib.Path,
+) -> None:
+    """src_dir を dst_dir に複製し、テキストファイルをすべて UTF-8 に変換する。
+
+    bib ファイルなどに含まれる Windows-1252 / Latin-1 バイト（例: \\x92）を
+    pandoc が受け付けられる UTF-8 に変換するための前処理。
+    テキスト以外のファイル（画像等）はそのままコピーする。
+    """
+    for src_file in src_dir.rglob("*"):
+        if src_file.is_dir():
+            continue
+        rel = src_file.relative_to(src_dir)
+        dst_file = dst_dir / rel
+        dst_file.parent.mkdir(parents=True, exist_ok=True)
+
+        if src_file.suffix.lower() in _TEXT_SUFFIXES:
+            # まず UTF-8 で試み、失敗したらフォールバック
+            content: str | None = None
+            for enc in ["utf-8"] + _FALLBACK_ENCODINGS:
+                try:
+                    content = src_file.read_text(encoding=enc)
+                    break
+                except (UnicodeDecodeError, ValueError):
+                    continue
+            if content is None:
+                # それでも読めない場合は置換モードで強制読み込み
+                content = src_file.read_text(encoding="utf-8", errors="replace")
+            dst_file.write_text(content, encoding="utf-8")
+        else:
+            shutil.copy2(src_file, dst_file)
 
 
 def collect_bibs(bib_dir: pathlib.Path) -> list[pathlib.Path]:
@@ -168,7 +209,17 @@ def main() -> None:
     if media_dir:
         print(f"  メディア出力先: {media_dir}")
 
-    rc = run_pandoc(pandoc, src_tex, output_md, src_dir, args.format, bib_files, media_dir)
+    with tempfile.TemporaryDirectory() as _tmp:
+        tmp_src = pathlib.Path(_tmp) / "src"
+        sanitize_src_to_utf8(src_dir, tmp_src)
+        tmp_tex      = tmp_src / "main.tex"
+        tmp_bib_dir  = tmp_src / "bibliography"
+        tmp_bib_files = collect_bibs(tmp_bib_dir)
+
+        rc = run_pandoc(
+            pandoc, tmp_tex, output_md, tmp_src,
+            args.format, tmp_bib_files, media_dir,
+        )
 
     if rc == 0:
         print(f"完了: {output_md}")
