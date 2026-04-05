@@ -1,6 +1,9 @@
 # マルコフ連鎖から大規模言語モデルへ
 現代行動理論の基礎と応用（BinN Studies シリーズ）
 
+[![Latest Release](https://img.shields.io/github/v/release/bin-utokyo/stone-ship?label=latest%20release)](https://github.com/bin-utokyo/stone-ship/releases/latest)
+
+最新リリース（PDF + Markdown）は[こちら](https://github.com/bin-utokyo/stone-ship/releases/latest)からダウンロードできます．
 
 ## ドキュメント
 
