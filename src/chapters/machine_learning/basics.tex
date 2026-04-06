@@ -1,0 +1,835 @@
+%% ============================================================
+%% basics.tex --- 機械学習の基礎
+%%
+%% 本章では，機械学習を支える数理的基盤を
+%% 確率論・統計的推論・情報理論・最適化・線形代数の観点から整理する．
+%% ============================================================
+
+\chapter{機械学習の基礎}
+\label{chap:ml-basics}
+
+機械学習とは，有限個の観測データから未知の規則性を抽出し，
+未知の入力に対して妥当な予測や意思決定を行うための数理的方法である．
+その中核には，確率分布の推定，損失関数の最小化，そして有限標本から無限母集団へ一般化するという
+三つの視点がある．
+本章では，後続のニューラルネットワーク，Transformer，生成モデルを理解するための共通言語として，
+機械学習の基礎理論を整理する\cite{Bishop2006,Murphy2012,Goodfellow2016}．
+
+% ------------------------------------------------------------------
+\section{学習問題の定式化}
+\label{sec:ml-formulation}
+% ------------------------------------------------------------------
+
+\subsection{データ生成分布と仮説空間}
+
+教師あり学習では，入力空間 $\mathcal{X}$ と出力空間 $\mathcal{Y}$ の上の未知分布
+$p_{\mathrm{data}}(x,y)$ から独立同分布でサンプルされたデータ集合
+\begin{equation}
+  \mathcal{D} = \{(x_i, y_i)\}_{i=1}^{N}
+  \overset{\mathrm{i.i.d.}}{\sim} p_{\mathrm{data}}(x,y)
+  \label{eq:dataset}
+\end{equation}
+を観測する．
+学習の目的は，ある仮説空間 $\mathcal{F} = \{f_{\theta}\}$ から関数
+$f_{\theta} : \mathcal{X} \to \mathcal{Y}$ を選び，
+未知データに対しても良好に振る舞う推定量を得ることである．
+
+分類問題では $f_{\theta}$ はラベルの予測規則として働き，
+回帰問題では実数値やベクトル値の出力を近似する．
+より一般には，関数そのものではなく条件付き分布
+\begin{equation}
+  p_{\theta}(y \mid x)
+\end{equation}
+を学習対象とみなすことで，予測値だけでなく不確実性も表現できる．
+この見方を採ると，回帰は条件付きガウス分布の推定，
+分類はベルヌーイ分布やカテゴリカル分布の推定として統一的に扱える．
+
+\subsection{期待リスクと経験リスク}
+
+損失関数 $\ell(f_{\theta}(x), y)$ を用いると，真に最小化したい量は期待リスク
+\begin{equation}
+  \mathcal{R}(\theta)
+  =
+  \mathbb{E}_{(x,y)\sim p_{\mathrm{data}}}
+  \left[
+    \ell(f_{\theta}(x), y)
+  \right]
+  \label{eq:true-risk}
+\end{equation}
+である．
+しかし $p_{\mathrm{data}}$ は未知であるため，実際には有限標本から得られる経験リスク
+\begin{equation}
+  \hat{\mathcal{R}}_{N}(\theta)
+  =
+  \frac{1}{N}
+  \sum_{i=1}^{N}
+  \ell(f_{\theta}(x_i), y_i)
+  \label{eq:empirical-risk}
+\end{equation}
+を最小化する．
+この原理を\textbf{経験リスク最小化（ERM: Empirical Risk Minimization）}という．
+
+さらにモデルの複雑さを抑えるため，正則化項 $\Omega(\theta)$ を加えた
+\begin{equation}
+  \hat{\mathcal{R}}_{N,\lambda}(\theta)
+  =
+  \hat{\mathcal{R}}_{N}(\theta) + \lambda \Omega(\theta)
+  \label{eq:regularized-risk}
+\end{equation}
+を最適化することが多い．
+ここで $\lambda > 0$ はデータ適合とモデル複雑度のトレードオフを制御するハイパーパラメータである．
+
+\subsection{汎化の視点}
+
+学習済みパラメータ $\hat{\theta}$ に対して重要なのは，
+訓練集合上の誤差ではなく未知データ上の期待リスク $\mathcal{R}(\hat{\theta})$ である．
+このとき
+\begin{equation}
+  \mathcal{R}(\hat{\theta}) - \hat{\mathcal{R}}_{N}(\hat{\theta})
+\end{equation}
+を\textbf{汎化ギャップ}という．
+大数の法則により，十分なサンプルが得られれば経験リスクは期待リスクに近づくが，
+仮説空間が過度に複雑であると訓練データに過剰適合し，
+汎化誤差が悪化する．
+この問題意識が，正則化，モデル選択，交差検証，ベイズ推定へとつながる．
+
+% ------------------------------------------------------------------
+\section{確率論の基礎}
+\label{sec:ml-probability}
+% ------------------------------------------------------------------
+
+\subsection{周辺分布と条件付き分布}
+
+複数の確率変数 $(X,Y)$ の結合分布 $p(x,y)$ から，
+一方の変数を積分して得られる分布
+\begin{equation}
+  p(x) = \int p(x,y)\,dy
+  \label{eq:marginal}
+\end{equation}
+を周辺分布という．
+また，$X=x$ が与えられたときの $Y$ の分布は
+\begin{equation}
+  p(y \mid x) = \frac{p(x,y)}{p(x)}
+  \label{eq:conditional}
+\end{equation}
+で定義される．
+したがって結合分布は
+\begin{equation}
+  p(x,y) = p(y \mid x)p(x)
+  \label{eq:product-rule}
+\end{equation}
+と分解できる．
+
+機械学習では，入力分布 $p(x)$ を直接学習する生成モデルと，
+条件付き分布 $p(y \mid x)$ を学習する識別モデルの両者が現れる．
+後者は分類・回帰の基礎であり，前者は表現学習や生成モデルの基礎となる．
+
+\subsection{ベイズの定理}
+
+式\eqref{eq:product-rule}を並べ替えると，ベイズの定理
+\begin{equation}
+  p(\theta \mid x)
+  =
+  \frac{p(x \mid \theta)\,p(\theta)}{p(x)}
+  \label{eq:bayes-theorem}
+\end{equation}
+が得られる．
+ここで $p(\theta)$ は事前分布，$p(x \mid \theta)$ は尤度，
+$p(\theta \mid x)$ は事後分布である．
+分母
+\begin{equation}
+  p(x) = \int p(x \mid \theta)p(\theta)\,d\theta
+\end{equation}
+は周辺尤度あるいはエビデンスと呼ばれる．
+
+ベイズの定理は，「データ観測前の信念」を「データ観測後の信念」へ更新する規則である．
+MAP推定や変分推論は，この更新を計算可能な形で近似または簡略化したものと理解できる．
+
+\subsection{期待値，分散，共分散}
+
+連続確率変数 $X$ に対する関数 $f(X)$ の期待値は
+\begin{equation}
+  \mathbb{E}[f(X)] = \int f(x)p(x)\,dx
+  \label{eq:expectation}
+\end{equation}
+で定義される．
+特に平均は $\mathbb{E}[X]$ であり，分散は
+\begin{equation}
+  \mathrm{Var}[X]
+  =
+  \mathbb{E}\left[(X-\mathbb{E}[X])^2\right]
+  =
+  \mathbb{E}[X^2] - \mathbb{E}[X]^2
+  \label{eq:variance}
+\end{equation}
+で与えられる．
+
+2変数 $X,Y$ の共分散は
+\begin{equation}
+  \mathrm{Cov}[X,Y]
+  =
+  \mathbb{E}\left[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])\right]
+  \label{eq:covariance}
+\end{equation}
+である．
+ベクトル値確率変数 $\boldsymbol{x} \in \mathbb{R}^{d}$ に対しては，
+共分散行列
+\begin{equation}
+  \Sigma
+  =
+  \mathbb{E}
+  \left[
+    (\boldsymbol{x} - \boldsymbol{\mu})
+    (\boldsymbol{x} - \boldsymbol{\mu})^{\top}
+  \right]
+  \label{eq:covariance-matrix}
+\end{equation}
+がデータの広がりと相関構造を表す．
+この量はPCAやガウス分布の定式化に直接現れる．
+
+\subsection{主要な確率分布}
+
+二値分類ではベルヌーイ分布
+\begin{equation}
+  p(y \mid \pi) = \pi^{y}(1-\pi)^{1-y},
+  \qquad y \in \{0,1\}
+  \label{eq:bernoulli}
+\end{equation}
+が基本である．
+多クラス分類ではカテゴリカル分布
+\begin{equation}
+  p(y=k \mid \boldsymbol{\pi}) = \pi_{k},
+  \qquad
+  \sum_{k=1}^{K}\pi_{k}=1
+  \label{eq:categorical}
+\end{equation}
+が用いられる．
+
+連続値の回帰や潜在変数モデルでは，ガウス分布
+\begin{equation}
+  \mathcal{N}(x;\mu,\sigma^{2})
+  =
+  \frac{1}{\sqrt{2\pi \sigma^{2}}}
+  \exp\left(
+    -\frac{(x-\mu)^{2}}{2\sigma^{2}}
+  \right)
+  \label{eq:gaussian}
+\end{equation}
+が最も重要である．
+多変量ガウス分布は
+\begin{equation}
+  \mathcal{N}(\boldsymbol{x};\boldsymbol{\mu},\Sigma)
+  =
+  \frac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}}
+  \exp\left(
+    -\frac{1}{2}
+    (\boldsymbol{x}-\boldsymbol{\mu})^{\top}
+    \Sigma^{-1}
+    (\boldsymbol{x}-\boldsymbol{\mu})
+  \right)
+  \label{eq:multivariate-gaussian}
+\end{equation}
+で与えられ，平均ベクトルと共分散行列によって完全に特徴づけられる．
+
+\subsection{独立性と条件付き独立性}
+
+確率変数 $X$ と $Y$ が独立であるとは，
+\begin{equation}
+  p(x,y) = p(x)p(y)
+  \label{eq:independence}
+\end{equation}
+がすべての $x,y$ で成り立つことである．
+さらに第三の変数 $Z$ が与えられた下で
+\begin{equation}
+  p(x,y \mid z) = p(x \mid z)p(y \mid z)
+  \label{eq:conditional-independence}
+\end{equation}
+が成り立つとき，$X$ と $Y$ は $Z$ の下で条件付き独立という．
+ナイーブベイズ分類器，隠れマルコフモデル，ベイジアンネットワークは，
+この条件付き独立性の仮定を構造化して使う代表例である．
+
+% ------------------------------------------------------------------
+\section{統計的推論と汎化}
+\label{sec:ml-inference}
+% ------------------------------------------------------------------
+
+\subsection{最尤推定}
+
+確率モデル $p_{\theta}(x)$ または $p_{\theta}(y \mid x)$ を定めたとき，
+観測データを最ももっともらしく生成するパラメータを選ぶ方法が
+\textbf{最尤推定（Maximum Likelihood Estimation, MLE）}である．
+独立標本に対する尤度は
+\begin{equation}
+  L(\theta;\mathcal{D})
+  =
+  \prod_{i=1}^{N} p_{\theta}(x_i)
+  \label{eq:likelihood}
+\end{equation}
+であり，対数尤度は
+\begin{equation}
+  \ell(\theta;\mathcal{D})
+  =
+  \sum_{i=1}^{N} \log p_{\theta}(x_i)
+  \label{eq:log-likelihood}
+\end{equation}
+となる．
+MLEは
+\begin{equation}
+  \hat{\theta}_{\mathrm{MLE}}
+  =
+  \mathop{\rm arg~max}\limits_{\theta}\,
+  \ell(\theta;\mathcal{D})
+  \label{eq:mle}
+\end{equation}
+で定義される．
+
+教師あり学習では条件付き尤度
+\begin{equation}
+  \ell(\theta;\mathcal{D})
+  =
+  \sum_{i=1}^{N}\log p_{\theta}(y_i \mid x_i)
+  \label{eq:conditional-log-likelihood}
+\end{equation}
+を最大化する．
+この負号付き平均
+\begin{equation}
+  \mathcal{L}_{\mathrm{NLL}}(\theta)
+  =
+  -\frac{1}{N}\sum_{i=1}^{N}\log p_{\theta}(y_i \mid x_i)
+  \label{eq:nll}
+\end{equation}
+が，実装上の基本損失関数になる．
+
+\subsection{損失関数の導出}
+
+回帰モデル
+\begin{equation}
+  y = f_{\theta}(x) + \varepsilon,
+  \qquad
+  \varepsilon \sim \mathcal{N}(0,\sigma^{2})
+  \label{eq:gaussian-regression}
+\end{equation}
+を仮定すると，
+\begin{equation}
+  -\log p_{\theta}(y \mid x)
+  =
+  \frac{1}{2\sigma^{2}}
+  \left(
+    y-f_{\theta}(x)
+  \right)^{2}
+  + \mathrm{const}
+  \label{eq:mse-derivation}
+\end{equation}
+であるから，最尤推定は平均二乗誤差の最小化に一致する．
+
+一方，二値分類で
+\begin{equation}
+  p_{\theta}(y \mid x)
+  =
+  \pi_{\theta}(x)^{y}
+  \left(
+    1-\pi_{\theta}(x)
+  \right)^{1-y}
+  \label{eq:bernoulli-classification}
+\end{equation}
+とおくと，
+\begin{equation}
+  -\log p_{\theta}(y \mid x)
+  =
+  -y\log \pi_{\theta}(x)
+  -(1-y)\log\left(1-\pi_{\theta}(x)\right)
+  \label{eq:bce}
+\end{equation}
+となり，クロスエントロピー損失が導かれる．
+したがって損失関数は経験的に選ばれるのではなく，
+確率モデルの仮定から演繹される量である．
+
+\subsection{MAP推定と正則化}
+
+パラメータに事前分布 $p(\theta)$ を導入すると，
+事後分布はベイズの定理により
+\begin{equation}
+  p(\theta \mid \mathcal{D})
+  \propto
+  p(\mathcal{D} \mid \theta)p(\theta)
+  \label{eq:posterior}
+\end{equation}
+となる．
+このモードを与える点推定
+\begin{equation}
+  \hat{\theta}_{\mathrm{MAP}}
+  =
+  \mathop{\rm arg~max}\limits_{\theta}
+  \left[
+    \log p(\mathcal{D}\mid \theta) + \log p(\theta)
+  \right]
+  \label{eq:map}
+\end{equation}
+を\textbf{MAP推定}という．
+
+例えば
+\begin{equation}
+  p(\theta)
+  \propto
+  \exp\left(
+    -\frac{\lambda}{2}\|\theta\|_{2}^{2}
+  \right)
+  \label{eq:gaussian-prior}
+\end{equation}
+とおけば，MAP推定は
+\begin{equation}
+  \mathop{\rm arg~min}\limits_{\theta}
+  \left[
+    \mathcal{L}_{\mathrm{NLL}}(\theta)
+    + \frac{\lambda}{2}\|\theta\|_{2}^{2}
+  \right]
+  \label{eq:l2-regularization}
+\end{equation}
+に一致し，L2正則化はガウス事前分布の導入として解釈される．
+
+\subsection{バイアス・バリアンス分解}
+
+回帰モデル $y = f(x) + \varepsilon$，$\mathbb{E}[\varepsilon]=0$，
+$\mathrm{Var}[\varepsilon]=\sigma^{2}$ を仮定する．
+学習データの取り方に依存する推定量 $\hat{f}(x)$ に対し，
+点 $x$ における平均二乗誤差は
+\begin{align}
+  \mathbb{E}_{\mathcal{D},\varepsilon}
+  \left[
+    (y-\hat{f}(x))^{2}
+  \right]
+  &=
+  \left(
+    \mathbb{E}_{\mathcal{D}}[\hat{f}(x)] - f(x)
+  \right)^{2}
+  \nonumber\\
+  &\quad
+  +
+  \mathbb{E}_{\mathcal{D}}
+  \left[
+    \left(
+      \hat{f}(x)-\mathbb{E}_{\mathcal{D}}[\hat{f}(x)]
+    \right)^{2}
+  \right]
+  + \sigma^{2}
+  \label{eq:bias-variance}
+\end{align}
+と分解される．
+第一項は\textbf{バイアス}，第二項は\textbf{バリアンス}，第三項は削減不可能なノイズである．
+モデルを複雑にするとバイアスは下がりやすいが，
+有限標本ではバリアンスが増えやすい．
+汎化性能の議論は，このトレードオフをどう制御するかに帰着する．
+
+\subsection{一般化誤差の収束}
+
+独立同分布の仮定の下では，大数の法則により
+\begin{equation}
+  \hat{\mathcal{R}}_{N}(\theta)
+  \xrightarrow[N\to\infty]{}
+  \mathcal{R}(\theta)
+  \label{eq:lln-risk}
+\end{equation}
+が成り立つ．
+しかし，学習では $\theta$ 自体がデータ依存であるため，
+単純な大数の法則だけでは汎化は保証されない．
+仮説空間の複雑度，正則化，事前分布，および検証データによるモデル選択が重要になるのはこのためである．
+この観点は深層学習における過学習や事前学習モデルの微調整を考える際にも本質的である．
+
+% ------------------------------------------------------------------
+\section{情報理論と損失関数}
+\label{sec:ml-information}
+% ------------------------------------------------------------------
+
+\subsection{エントロピー}
+
+離散確率変数 $X$ のエントロピーは
+\begin{equation}
+  H(X) = - \sum_{x} p(x)\log p(x)
+  \label{eq:entropy}
+\end{equation}
+で定義される\cite{Shannon1948}．
+これは，観測前に残されている平均的不確実性を表す量である．
+分布が一様であるほどエントロピーは大きく，
+ある値に集中するほど小さくなる．
+
+\subsection{交差エントロピーと最尤推定}
+
+真の分布を $p(x)$，モデル分布を $q(x)$ とすると，
+交差エントロピーは
+\begin{equation}
+  H(p,q)
+  =
+  -\sum_{x} p(x)\log q(x)
+  \label{eq:cross-entropy}
+\end{equation}
+である．
+また
+\begin{equation}
+  H(p,q)
+  =
+  H(p) + D_{\mathrm{KL}}(p\|q)
+  \label{eq:cross-entropy-kl}
+\end{equation}
+が成り立つ．
+ここで $H(p)$ はモデルに依存しないため，
+交差エントロピーの最小化はKLダイバージェンスの最小化と等価である．
+
+訓練データを経験分布 $\hat{p}_{N}$ とみなすと，
+負の対数尤度
+\begin{equation}
+  -\frac{1}{N}\sum_{i=1}^{N}\log q_{\theta}(x_i)
+  \label{eq:empirical-cross-entropy}
+\end{equation}
+は $\hat{p}_{N}$ と $q_{\theta}$ の交差エントロピーそのものである．
+このため，分類におけるクロスエントロピー損失も，
+生成モデルにおける最大尤度学習も，同一の情報理論的原理に従っている．
+
+\subsection{KLダイバージェンス}
+
+KLダイバージェンスは
+\begin{equation}
+  D_{\mathrm{KL}}(p\|q)
+  =
+  \sum_{x} p(x)\log\frac{p(x)}{q(x)}
+  \label{eq:kl}
+\end{equation}
+で定義される\cite{Kullback1951}．
+ギブスの不等式により
+\begin{equation}
+  D_{\mathrm{KL}}(p\|q) \geq 0
+  \label{eq:kl-nonnegative}
+\end{equation}
+が成り立ち，等号成立は $p=q$ ほとんど至る所のときに限られる．
+
+ただしKLダイバージェンスは一般に対称ではなく，
+\begin{equation}
+  D_{\mathrm{KL}}(p\|q) \neq D_{\mathrm{KL}}(q\|p)
+  \label{eq:kl-asymmetry}
+\end{equation}
+である．
+この非対称性は，モード被覆的な近似とモード探索的な近似の差として，
+変分推論や生成モデルの挙動に直接影響する．
+
+\subsection{相互情報量}
+
+2変数間の依存の強さは相互情報量
+\begin{equation}
+  I(X;Y)
+  =
+  D_{\mathrm{KL}}(p(x,y)\|p(x)p(y))
+  \label{eq:mutual-information}
+\end{equation}
+で定義される．
+同値な表現として
+\begin{equation}
+  I(X;Y) = H(X) - H(X\mid Y) = H(Y) - H(Y\mid X)
+  \label{eq:mi-entropy}
+\end{equation}
+がある．
+相互情報量は，表現学習における有用な特徴抽出や，
+説明変数と目的変数の依存関係を測る尺度として頻繁に現れる．
+
+\subsection{ELBOとの接続}
+
+潜在変数 $\boldsymbol{z}$ を持つ生成モデルでは，
+真の事後分布 $p_{\theta}(\boldsymbol{z}\mid \boldsymbol{x})$ が計算困難であることが多い．
+近似分布 $q_{\phi}(\boldsymbol{z}\mid \boldsymbol{x})$ を導入すると，
+\begin{equation}
+  \log p_{\theta}(\boldsymbol{x})
+  =
+  \mathcal{L}(\theta,\phi;\boldsymbol{x})
+  +
+  D_{\mathrm{KL}}
+  \left(
+    q_{\phi}(\boldsymbol{z}\mid \boldsymbol{x})
+    \,\middle\|\,
+    p_{\theta}(\boldsymbol{z}\mid \boldsymbol{x})
+  \right)
+  \label{eq:elbo-decomposition}
+\end{equation}
+と分解できる．
+したがって
+\begin{equation}
+  \mathcal{L}(\theta,\phi;\boldsymbol{x})
+  =
+  \mathbb{E}_{q_{\phi}}
+  \left[
+    \log p_{\theta}(\boldsymbol{x}\mid\boldsymbol{z})
+  \right]
+  -
+  D_{\mathrm{KL}}
+  \left(
+    q_{\phi}(\boldsymbol{z}\mid \boldsymbol{x})
+    \,\middle\|\,
+    p(\boldsymbol{z})
+  \right)
+  \label{eq:elbo}
+\end{equation}
+を最大化することは，対数尤度の下限を最大化することに等しい．
+ここで再び，学習の中心にKLダイバージェンスが現れる．
+
+% ------------------------------------------------------------------
+\section{最適化の基礎}
+\label{sec:ml-optimization}
+% ------------------------------------------------------------------
+
+\subsection{凸性と局所線形化}
+
+関数 $f:\mathbb{R}^{d}\to\mathbb{R}$ が凸であるとは，
+任意の $\boldsymbol{x},\boldsymbol{y}$ と $0\leq t\leq 1$ に対して
+\begin{equation}
+  f(t\boldsymbol{x} + (1-t)\boldsymbol{y})
+  \leq
+  tf(\boldsymbol{x}) + (1-t)f(\boldsymbol{y})
+  \label{eq:convexity}
+\end{equation}
+が成り立つことである\cite{Boyd2004}．
+微分可能な凸関数では，一次近似が常に大域的下界を与える：
+\begin{equation}
+  f(\boldsymbol{y})
+  \geq
+  f(\boldsymbol{x})
+  +
+  \nabla f(\boldsymbol{x})^{\top}
+  (\boldsymbol{y}-\boldsymbol{x})
+  \label{eq:first-order-convex}
+\end{equation}
+この性質により，勾配は「最も急に増加する方向」を与え，
+その逆方向は局所的な減少方向になる．
+
+\subsection{勾配降下法}
+
+勾配降下法は，パラメータを
+\begin{equation}
+  \theta_{t+1}
+  =
+  \theta_{t} - \eta_{t}\nabla_{\theta} \mathcal{L}(\theta_{t})
+  \label{eq:gradient-descent}
+\end{equation}
+で更新する最も基本的な最適化法である．
+ここで $\eta_{t}>0$ は学習率である．
+
+目的関数が $L$-smooth である，すなわち
+\begin{equation}
+  \|\nabla f(\boldsymbol{x})-\nabla f(\boldsymbol{y})\|_{2}
+  \leq
+  L\|\boldsymbol{x}-\boldsymbol{y}\|_{2}
+  \label{eq:l-smooth}
+\end{equation}
+を満たすなら，
+\begin{equation}
+  f(\theta_{t+1})
+  \leq
+  f(\theta_{t})
+  -
+  \eta_{t}
+  \left(
+    1-\frac{L\eta_{t}}{2}
+  \right)
+  \|\nabla f(\theta_{t})\|_{2}^{2}
+  \label{eq:descent-lemma}
+\end{equation}
+が成り立つ．
+したがって $0 < \eta_{t} < 2/L$ なら，各反復で目的関数は減少する．
+
+\subsection{確率的勾配降下法}
+
+大規模データでは，全標本に対する勾配
+$\nabla \hat{\mathcal{R}}_{N}(\theta)$ の計算は高コストである．
+ミニバッチ $B_{t}$ を用いて
+\begin{equation}
+  \boldsymbol{g}_{t}
+  =
+  \frac{1}{|B_{t}|}
+  \sum_{i\in B_{t}}
+  \nabla_{\theta}\ell(f_{\theta}(x_i), y_i)
+  \label{eq:minibatch-gradient}
+\end{equation}
+を計算し，
+\begin{equation}
+  \theta_{t+1} = \theta_{t} - \eta_{t}\boldsymbol{g}_{t}
+  \label{eq:sgd}
+\end{equation}
+と更新する方法が\textbf{確率的勾配降下法（SGD）}である\cite{RobbinsMonro1951}．
+$\boldsymbol{g}_{t}$ は真の勾配の不偏推定量
+\begin{equation}
+  \mathbb{E}[\boldsymbol{g}_{t}] = \nabla \hat{\mathcal{R}}_{N}(\theta_{t})
+  \label{eq:unbiased-gradient}
+\end{equation}
+となるが，分散を持つため更新軌道は揺らぐ．
+このノイズが局所最小からの脱出や暗黙の正則化に寄与することもある．
+
+\subsection{制約付き最適化とラグランジュ関数}
+
+制約
+\begin{equation}
+  g_{j}(\theta)\leq 0,
+  \qquad
+  h_{k}(\theta)=0
+  \label{eq:constraints}
+\end{equation}
+の下で $f(\theta)$ を最小化したいとき，
+ラグランジュ関数
+\begin{equation}
+  \mathcal{L}(\theta,\lambda,\nu)
+  =
+  f(\theta)
+  +
+  \sum_{j}\lambda_{j}g_{j}(\theta)
+  +
+  \sum_{k}\nu_{k}h_{k}(\theta)
+  \label{eq:lagrangian}
+\end{equation}
+を導入する．
+凸問題ではKKT条件
+\begin{align}
+  \nabla_{\theta}\mathcal{L}(\theta^{\ast},\lambda^{\ast},\nu^{\ast}) &= 0,
+  \label{eq:kkt-stationarity}
+  \\
+  g_{j}(\theta^{\ast}) &\leq 0,
+  \qquad
+  h_{k}(\theta^{\ast}) = 0,
+  \label{eq:kkt-feasibility}
+  \\
+  \lambda_{j}^{\ast} &\geq 0,
+  \qquad
+  \lambda_{j}^{\ast}g_{j}(\theta^{\ast}) = 0
+  \label{eq:kkt-complementary}
+\end{align}
+が最適性の特徴付けを与える．
+この考え方はSVM，正則化付き推定，最適輸送，資源制約付き学習問題に広く現れる．
+
+% ------------------------------------------------------------------
+\section{線形代数の基礎}
+\label{sec:ml-linear-algebra}
+% ------------------------------------------------------------------
+
+\subsection{ベクトル，内積，ノルム}
+
+ベクトル $\boldsymbol{x},\boldsymbol{y}\in\mathbb{R}^{d}$ の内積
+\begin{equation}
+  \langle \boldsymbol{x}, \boldsymbol{y}\rangle
+  =
+  \boldsymbol{x}^{\top}\boldsymbol{y}
+  \label{eq:inner-product}
+\end{equation}
+は，幾何学的には射影と角度を記述する．
+そこから誘導されるユークリッドノルム
+\begin{equation}
+  \|\boldsymbol{x}\|_{2}
+  =
+  \sqrt{\boldsymbol{x}^{\top}\boldsymbol{x}}
+  \label{eq:l2norm}
+\end{equation}
+は距離と正則化の基礎である．
+L1ノルム $\|\boldsymbol{x}\|_{1} = \sum_{i}|x_{i}|$ は疎性を促し，
+L2ノルムは回転不変性を持つ．
+
+\subsection{行列と二次形式}
+
+線形写像 $\boldsymbol{y} = A\boldsymbol{x}$ は，
+特徴量の線形変換，線形回帰，注意機構，グラフ信号処理など，
+機械学習のほぼすべてのモデルに現れる．
+対称行列 $A=A^{\top}$ に対する二次形式
+\begin{equation}
+  q(\boldsymbol{x}) = \boldsymbol{x}^{\top}A\boldsymbol{x}
+  \label{eq:quadratic-form}
+\end{equation}
+は，ガウス分布の指数部，最小二乗法，Newton法の局所近似を統一的に表現する．
+特に $A$ が正定値であれば，$q(\boldsymbol{x})$ は凸関数となる．
+
+\subsection{固有値分解と特異値分解}
+
+対称行列 $A\in\mathbb{R}^{d\times d}$ は，
+固有値分解
+\begin{equation}
+  A = U\Lambda U^{\top}
+  \label{eq:eigendecomposition}
+\end{equation}
+を持つ．
+ここで $U$ は直交行列，$\Lambda = \mathrm{diag}(\lambda_{1},\ldots,\lambda_{d})$ は固有値である．
+固有値は行列が各固有方向をどれだけ拡大・縮小するかを表す．
+
+一般の行列 $X\in\mathbb{R}^{N\times d}$ に対しては，
+\textbf{特異値分解（SVD）}
+\begin{equation}
+  X = U\Sigma V^{\top}
+  \label{eq:svd}
+\end{equation}
+が成り立つ．
+SVDは，低ランク近似，潜在意味解析，行列補完，主成分分析の基礎である．
+
+\subsection{最小二乗法}
+
+線形回帰モデル
+\begin{equation}
+  \boldsymbol{y} = X\boldsymbol{w} + \boldsymbol{\varepsilon}
+  \label{eq:linear-regression}
+\end{equation}
+に対し，残差平方和
+\begin{equation}
+  J(\boldsymbol{w})
+  =
+  \|X\boldsymbol{w}-\boldsymbol{y}\|_{2}^{2}
+  \label{eq:least-squares-objective}
+\end{equation}
+を最小化すると，正規方程式
+\begin{equation}
+  X^{\top}X\boldsymbol{w} = X^{\top}\boldsymbol{y}
+  \label{eq:normal-equation}
+\end{equation}
+が得られる．
+$X^{\top}X$ が可逆であれば，
+\begin{equation}
+  \hat{\boldsymbol{w}}
+  =
+  (X^{\top}X)^{-1}X^{\top}\boldsymbol{y}
+  \label{eq:ols}
+\end{equation}
+で解ける．
+この形は，線形回帰が「射影問題」であることを示している．
+
+\subsection{主成分分析}
+
+平均ゼロのデータ $\{\boldsymbol{x}_{i}\}_{i=1}^{N}$ に対し，
+分散が最大となる単位ベクトル方向 $\boldsymbol{u}$ を求める問題は
+\begin{equation}
+  \mathop{\rm arg~max}\limits_{\|\boldsymbol{u}\|_{2}=1}
+  \boldsymbol{u}^{\top}S\boldsymbol{u},
+  \qquad
+  S = \frac{1}{N}\sum_{i=1}^{N}\boldsymbol{x}_{i}\boldsymbol{x}_{i}^{\top}
+  \label{eq:pca-objective}
+\end{equation}
+と書ける\cite{Pearson1901}．
+ラグランジュ未定乗数法により
+\begin{equation}
+  S\boldsymbol{u} = \lambda \boldsymbol{u}
+  \label{eq:pca-eigenproblem}
+\end{equation}
+が得られるため，主成分は共分散行列の最大固有値に対応する固有ベクトルである．
+複数主成分を取るときは，上位固有ベクトルを列にもつ行列 $U_{k}$ を用いて
+\begin{equation}
+  \boldsymbol{z} = U_{k}^{\top}\boldsymbol{x}
+  \label{eq:pca-projection}
+\end{equation}
+と射影する．
+PCAは，高次元データの圧縮，ノイズ除去，可視化の基本手法であり，
+後続章の表現学習と深く関係する．
+
+% ------------------------------------------------------------------
+\section{まとめ}
+\label{sec:ml-basics-summary}
+% ------------------------------------------------------------------
+
+本章では，機械学習を支える数理的骨格として，
+データ生成分布，期待リスク，最尤推定，情報量，勾配法，線形変換を整理した．
+重要なのは，これらが互いに独立な話題ではない点である．
+確率モデルの仮定が損失関数を定め，
+情報理論がその意味を与え，
+最適化理論が学習アルゴリズムを支え，
+線形代数が実装可能な計算形式を与える．
+
+後続章では，この枠組みの上にニューラルネットワーク，Transformer，生成モデルを積み上げる．
+とりわけ，クロスエントロピーと最尤推定の関係，
+KLダイバージェンスと変分推論の関係，
+そして勾配降下法と行列表現の関係は，深層学習を理解する上で繰り返し現れる基本原理である．
