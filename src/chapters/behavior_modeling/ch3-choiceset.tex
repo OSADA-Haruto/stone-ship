@@ -3,9 +3,14 @@
 
 \section{選択肢非列挙型モデル}\label{sec:choiceset}
 本節では，選択肢集合の問題と選択肢非列挙型の経路選択モデルについて解説する．
-具体的には，選択肢集合の定義の難しさと列挙型モデルの限界を説明した上で，Recursive Logitや Perturbed Utility Model などの選択肢非列挙型のモデルを紹介する．
 
-\subsection{選択肢集合の爆発}
+本節の構成は以下の通りである．
+まず\ref{ssec:choiceset_explosion}項で経路選択肢集合の爆発問題を示し，列挙型モデルの限界を説明する．
+次に\ref{ssec:recursive_logit}項で逐次的リンク選択に基づくRecursive Logit（RL）モデルとその一般化を導入する．
+\ref{ssec:time_structured_rl}項では，時間構造化ネットワークの導入によりサイクリック経路の扱いと動的計画法による効率的な求解が可能になることを示し，プリズム制約による選択肢集合の限定についても述べる．
+最後に\ref{ssec:purc}項で，摂動効用理論に基づくPerturbed Utility Route Choice（PURC）モデルを紹介し，RLモデルとの共役関係を論じる．
+
+\subsection{選択肢集合の爆発}\label{ssec:choiceset_explosion}
 経路選択肢集合は簡単に爆発する．
 例えばサイズ$n \times n$のグリッドネットワーク（図 \ref{fig:grid-paths}）における単純なODペアに対して，同じ点を2度通らないような単純経路の数は表 \ref{tab:simple-paths}のように $n$ に対して急激に増加する．
 MNLモデルのような選択肢集合を全て列挙してから一括で経路を選択するモデル（選択肢列挙型モデル）ではこのような爆発する選択肢集合を扱うことは明らかに困難である．
@@ -46,7 +51,7 @@ $n$ & 経路数 \\
 \end{table}
 
 
-\subsection{動的離散選択モデルとRecursive Logitモデル}
+\subsection{動的離散選択モデルとRecursive Logitモデル}\label{ssec:recursive_logit}
 以降では選択対象を経路に絞り，経路選択モデルの文脈において議論する．
 経路列挙の困難さに対処するために，経路非列挙型の経路選択モデルが提案されてきた．
 その基本的な着想は，経路を一体的な選択肢として扱うのではなく，交差点ごとに次のリンクを逐次的に選択するマルコフ過程として表現することにある．
@@ -111,7 +116,7 @@ Bellman方程式は以下のように拡張される．
 \end{equation}
 $\beta = 1$ のとき標準的なRLモデル（大局的な意思決定）に一致し，$\beta = 0$ のときドライバーは直近の遷移効用 $v$ のみに基づいて近視眼的にリンクを選択する．
 $0 < \beta < 1$ では両者の中間的な意思決定を表現でき，$\beta$ を推定することで意思決定の動学性を定量的に把握できる．
-\subsection{時間構造化ネットワークとRecursive Logit}\label{sec:time-structured-rl}
+\subsection{時間構造化ネットワークとRecursive Logit}\label{ssec:time_structured_rl}
 前節のRLモデルは強力な枠組みであるが，標準的な空間ネットワーク上の定式化にはいくつかの実用上の課題がある．
 第一に，ネットワークにサイクリック構造（同じノードを再訪する経路）が存在する場合，価値関数の求解が困難になる．
 式(\ref{eq:rl-matrix})の行列 $\bm{M}$ のスペクトル半径が1以上となると，連立方程式の解が発散し得るからである．
@@ -238,7 +243,7 @@ $\Delta_t(a' \mid a) = 1$ のときのみ遷移が許容される．この制約
 \end{enumerate}
 
 
-\subsection{摂動効用型経路選択モデル}
+\subsection{摂動効用型経路選択モデル}\label{ssec:purc}
 前節のRecursive Logitモデルは，ARUMの枠組みの中でBellman方程式を用いて経路列挙を回避するアプローチであった．
 本項では，冒頭で導入したもう一つの理論的系譜である摂動効用理論の観点から選択肢非列挙型の経路選択問題にアプローチするモデルを紹介する．
 
