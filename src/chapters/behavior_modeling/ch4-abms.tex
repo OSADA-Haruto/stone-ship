@@ -49,20 +49,26 @@ Zimmermann et al. \cite{ZIMMERMANN2018273} は，Recursive Logitモデル \cite{
 このアプローチでは，各時点において次に行う活動を逐次的に選択していくことで活動スケジュールを生成する．
 前節で紹介した経路非列挙型モデルと同様の発想であり，活動経路の列挙を必要とせず，選択肢集合の爆発を回避できるという利点がある．
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{assets/behavior_modeling/abms.png}
+  \caption{様々なアクティビティモデルの例．上段左から階層的選択モデルの例（Bowman and Ben-Akiva \cite{BOWMAN20011}），逐次的選択モデルの例（Zimmermann et al. \cite{ZIMMERMANN2018273}），離散連続モデル（MDCEV）\cite{BHAT2008274}），下段は活動ニーズモデル（閾値モデル）の例．}
+   \label{fig:abms_examples}
+\end{figure}
+
 \subsection{日間変動を捉えるモデル：活動ニーズモデル}\label{ssec:activity_needs_model}
 上記モデルは単独日の活動スケジューリングを対象としているが，実際の個人の活動スケジュールは日ごと(day-to-day)に変動する．
 例えば毎日の通勤パタンは概ね規則的であるが，買い物や余暇活動は曜日や直近の活動履歴によって変化する．
 このような日間変動を捉えるための代表的なアプローチとして，活動ニーズ（Activity Needs）に基づくモデルがある \cite{ARENTZE2009251, ARENTZE2011447}．
 このモデルでは，各活動種類に対して「前回の実施からの経過時間」に応じて活動ニーズが蓄積し，ニーズが閾値を超えたときに活動が発生すると仮定する．
 またHabib \cite{habib2008modelling} は活動ニーズの充足を効用として定式化し，効用最大化の枠組みの中で活動発生を記述するモデルを提案した．
-これらのモデルは日間変動の構造を明示的に表現できる一方，閾値やニーズ蓄積関数の設定が分析者の事前知識に依存すること，また活動場所を同時に扱う場合に次元の呪いが顕著になることが課題として挙げられる．
+これらのモデルは日間変動の構造を明示的に表現できる一方，閾値やニーズ蓄積関数の設定が分析者の事前知識に依存すること，明示的な構造を仮定するために柔軟な代替パタンの表現が難しいことが課題として挙げられる．
+
 
 \subsection{離散連続モデル}\label{ssec:discrete_continuous}
-
 前項までのモデルは主に「どの活動を行うか」という離散選択に焦点を当てていた．
-しかし，活動スケジューリングにおいては活動種類の選択（離散選択）と同時に，
-各活動への時間配分（連続選択）も決定される．
-このような離散選択と連続選択を同時に扱うモデルを\textbf{離散連続モデル}（Discrete-Continuous Model）と呼ぶ \cite{FukudaChikaraishi2013}．
+しかし，活動スケジューリングにおいては活動種類の選択（離散選択）と同時に各活動への時間配分（連続選択）も決定される．
+このような離散選択と連続選択を同時に扱うモデルを\textbf{離散連続モデル}（Discrete-Continuous Model）と呼ぶ．
 
 \subsubsection{Corner Solution の問題}
 
@@ -150,12 +156,12 @@ MDCEVモデルはKT条件に基づく構造型モデルであり，$K$ 個の財
 \end{equation}
 ここで $\bm{t} = (t_1, \dots, t_K)$ は各活動への時間配分ベクトル，$\psi_k = \exp(\bm{\beta}^\top \bm{x}_k + \varepsilon_k)$ は活動 $k$ の基本効用（ベースライン効用），$\gamma_k > 0$ は活動 $k$ の消費単位を調整する変換（translation）パラメータ，$\alpha_k \le 1$ は飽和パラメータである．
 
-KT条件を適用すると，活動 $k$ に正の時間が配分される（$t_k > 0$）ための条件は，その活動の限界効用が影の価格（ラグランジュ乗数）$\lambda$ 以上であることとなる．
+KT条件を適用すると，活動 $k$ に正の時間が配分される（$t_k > 0$）ための条件は，その活動の限界効用がShadow price（ラグランジュ乗数）$\lambda$ 以上であることとなる．
 \begin{align}
   \frac{\partial U}{\partial t_k} = \lambda &\quad \text{if } t_k > 0 \label{eq:mdcev_kt_interior} \\
   \frac{\partial U}{\partial t_k} < \lambda &\quad \text{if } t_k = 0 \label{eq:mdcev_kt_corner}
 \end{align}
-すなわち，限界効用が影の価格に達しない活動には時間が配分されず（$t_k = 0$），Corner Solutionが内生的に生じる．
+すなわち，限界効用がShadow priceに達しない活動には時間が配分されず（$t_k = 0$），Corner Solutionが内生的に生じる．
 
 この効用関数の特徴は以下の通りである．
 \begin{description}
