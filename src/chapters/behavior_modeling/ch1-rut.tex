@@ -156,9 +156,9 @@ H(p)=-\sum_a p_a \ln p_a
 \end{equation}
 を考えると，その最適解として Logit 選択確率が得られる．
 ここで，しばしば
-\[
-H(p)=-\sum_a (p_a\ln p_a-p_a)
-\]
+\begin{equation}\label{eq:corrected_entropy}
+  H(p)=-\sum_a (p_a\ln p_a-p_a)
+\end{equation}
 と等価に書かれることもあるが，これは制約 $\sum_a p_a=1$ のもとで定数差しか持たず，最適解には影響しない．
 
 このことは，ARUM において「誤差項に i.i.d. Gumbel 分布を仮定する」ことと，
