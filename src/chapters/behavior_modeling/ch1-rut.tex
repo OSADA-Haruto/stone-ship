@@ -114,14 +114,30 @@ U_{ka} = V_{ka} + \varepsilon_{ka}, \quad \varepsilon_{ka} \sim \text{i.i.d. Gum
 \end{equation}
 
 \subsubsection{摂動効用理論との関連}
-なお序章で述べたように，このLogit選択確率は摂動効用理論の観点からも導出できる．
-具体的には，需要ベクトル $\bm{p}$（各選択肢の選択確率）に対して，期待効用とShannon entropy正則化項からなる以下の直接効用関数
+なお序章で述べたように，Logit 選択確率は摂動効用理論の観点からも導出できる．
+具体的には，需要ベクトル $p$（各選択肢の選択確率）に対して，
+期待効用に Shannon entropy による正則化項を加えた
 \begin{equation}\label{eq:perturbed_utility}
-  \max_{\bm{p} \geq \bm{0},\, \sum_a p_a = 1} \left\{ \sum_a p_a V_a + \frac{1}{\mu}\mathcal{H}(\bm{p}) \right\}, \quad \mathcal{H}(\bm{p}) = -\sum_a \left( p_a \ln p_a - p_a \right)
+\max_{p_a\ge 0,\ \sum_a p_a=1}
+\left\{
+\sum_a p_a V_a + \mu H(p)
+\right\},
+\qquad
+H(p)=-\sum_a p_a \ln p_a
+\tag{3.11}
 \end{equation}
-を最適化すると，最適解として上記のLogit選択確率が得られる．
-なおエントロピー項における $-p_a$ は，式変形の便宜上加えた項であり，最適解には影響を与えない．
-すなわち，ARUMにおける「誤差項にガンベル分布を仮定する」ことと，摂動効用理論における「正則化項にShannon entropyを仮定する」ことは\textbf{共役関係}にあり，同一の選択確率を導く．
+を考えると，その最適解として Logit 選択確率が得られる．
+ここで，しばしば
+\[
+H(p)=-\sum_a (p_a\ln p_a-p_a)
+\]
+と等価に書かれることもあるが，これは制約 $\sum_a p_a=1$ のもとで定数差しか持たず，最適解には影響しない．
+
+このことは，ARUM において「誤差項に i.i.d. Gumbel 分布を仮定する」ことと，
+摂動効用理論において「Shannon entropy 型の正則化項を導入する」ことが，
+同一の Logit 選択確率を与える等価な表現であることを意味する．
+すなわち，一方は誤差項の分布仮定によって，他方は摂動項の形状によって，
+同じ行動仮説を表現していると解釈できる．
 この双対的な見方は，第3節で摂動効用理論に基づく経路選択モデルを導入する際に重要となる．
 
 なお，ガンベル分布と正規分布の確率密度関数は図\ref{fig:gumbel-pdf}のような形状をしている．
